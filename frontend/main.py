@@ -1,6 +1,5 @@
 import streamlit as st
 from sqlalchemy import text  # For raw SQL if needed, but we'll use ORM-style
-from database_relational.db_main import sessionlocal
 import requests
 
 # Page configuration (unchanged)
@@ -14,9 +13,9 @@ st.set_page_config(
 # Custom CSS (unchanged - all your styling remains exactly the same)
 st.markdown("""
 <style>
-    /* [All your existing CSS unchanged] */
+    
     [data-testid="stAppViewContainer"] {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #667eea 0%, #CBC3E3 100%);
     }
     /* ... rest of your CSS exactly as is ... */
 </style>
@@ -25,7 +24,6 @@ st.markdown("""
 # Main title (unchanged)
 st.markdown('<h1 class="main-title">CUSTOMER CHURN PREDICTOR</h1>', unsafe_allow_html=True)
 
-# Sidebar (unchanged - all inputs exactly the same)
 with st.sidebar:
     st.markdown("## 📋 Customer Information")
     st.markdown("---")
@@ -65,7 +63,6 @@ with st.sidebar:
                                  ["Electronic check", "Mailed check", 
                                   "Bank transfer (automatic)", "Credit card (automatic)"])
 
-# Main content area (unchanged)
 col1, col2, col3 = st.columns([1, 2, 1])
 
 with col2:
@@ -74,13 +71,11 @@ with col2:
     st.markdown("Click the button below to predict customer churn probability based on the provided information.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# Predict button (unchanged)
 
 col1, col2, col3 = st.columns([1, 1, 1])
 with col2:
     predict_btn = st.button("Predict Churn", use_container_width=True)
 
-# ONLY CHANGE: Replace raw SQL with SQLAlchemy (inside if predict_btn)
 if predict_btn:
    
     payload={
@@ -101,8 +96,7 @@ if predict_btn:
     }
     #connecting with api(backend)
     API_URL="http://127.0.0.1:8000/post_name"   
-# add this into frontend code
-#payload=user input which is get validate from backend api
+
     try:
         with st.spinner("calling API..."):
             res= requests.post(API_URL,
@@ -115,7 +109,7 @@ if predict_btn:
             data=res.json()  
         
             #-----replace predicted price with name which is returned as ans from api-----
-        y_pred=data.get("Wii churn")  
+        y_pred=data.get("will churn")  
         y_prob=data.get("Probability of Churn")  
                 
 
