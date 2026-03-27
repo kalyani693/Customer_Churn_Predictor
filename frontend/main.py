@@ -1,6 +1,10 @@
 import streamlit as st
 from sqlalchemy import text  # For raw SQL if needed, but we'll use ORM-style
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Page configuration (unchanged)
 st.set_page_config(
@@ -95,7 +99,7 @@ if predict_btn:
     "TotalCharges":TotalCharges
     }
     #connecting with api(backend)
-    API_URL="http://127.0.0.1:8000/post_name"   
+    API_URL=os.getenv("api_url")  # Ensure this is set in your .env file, e.g., http://localhost:8000/post_name  
 
     try:
         with st.spinner("calling API..."):

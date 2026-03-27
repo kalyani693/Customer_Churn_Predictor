@@ -1,12 +1,16 @@
-from python:3.13-slim
+FROM python:3.11-slim
 
-WORKDIR/app
+WORKDIR /app
 
-copy requirements.txt .
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-copy ..
+RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
+COPY ./wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+
+
+COPY . .
 
 EXPOSE 8000
-CMD ["uvicorn", "FastAPI.main:app", "--host","0.0.0.0","--port","8000"]
-
+CMD ["./wait-for-it.sh","db:3306","--","python","-m","uvicorn","FastAPI.main:app","--host","0.0.0.0","--port","8000"]

@@ -8,3 +8,5 @@ joblib
 sqlalchemy
 pydantic
 xgboost
+PyMySQL
+python-dotenv

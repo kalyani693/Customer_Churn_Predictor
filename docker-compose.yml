@@ -1,0 +1,40 @@
+
+services:
+ frontend:
+  build: ./frontend
+  container_name: streamlit_app 
+  ports:
+  - "8501:8501"
+  depends_on:
+  - backend
+  environment:
+  - api_url=http://backend:8000/post_name
+
+ backend:
+  build: ./backend 
+  container_name: fastapi_app
+  ports:
+   - "8000:8000"
+  depends_on:
+   - db
+  environment:
+   url_database: mysql+pymysql://root:Kalyani%40190306@db:3306/iiit_ngp_demo
+
+ db:
+  image: mysql:8
+  container_name : mysql_db
+  ports:
+   - "3607:3606"
+  restart: always
+  environment:
+    MYSQL_ROOT_PASSWORD: Kalyani%40190306
+    MYSQL_DATABASE: iiit_ngp_demo
+
+  volumes:
+   - mysql_data:/var/lib/mysql 
+
+volumes:
+ mysql_data:
+
+
+
