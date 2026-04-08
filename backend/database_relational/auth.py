@@ -1,4 +1,3 @@
-from pydantic import BaseModel
 from database_relational.db_main import sessionlocal
 
 

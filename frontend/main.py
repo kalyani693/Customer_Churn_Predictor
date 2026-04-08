@@ -110,7 +110,7 @@ if predict_btn:
         if res.status_code != 200:
             st.error(f"API Error{res.status_code}: {res.text}")
         else:           
-            data=res.json()  
+            data =res.json()  
         
             #-----replace predicted price with name which is returned as ans from api-----
         y_pred=data.get("will churn")  

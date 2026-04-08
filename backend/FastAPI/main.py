@@ -1,4 +1,4 @@
-from fastapi import FastAPI,HTTPException,Depends,Query,Path,responses
+from fastapi import FastAPI,HTTPException,Depends,Query,Path,responses,status
 from typing import List,Annotated
 from database_relational import model
 from FastAPI.service import ChurnInput
@@ -40,11 +40,11 @@ def get_data():
    db.commit()
    db.close()
    
-@app.get("/",response_model=dict)
+@app.get("/",response_model=dict,status_code=status.HTTP_200_OK)
 async def home():
     return {"message":"Wellcome"}    
 
-@app.get("/health")
+@app.get("/health",response_model=dict,status_code=status.HTTP_200_OK)
 def health_check():
    return responses.JSONResponse(status_code=200,content={
       'Status':'ok',
@@ -56,9 +56,8 @@ def read_data():
    data=get_data()
    return data
 
-@app.post("/post_name")#put dependency here
-#creat any function for post
-async def predict(user_ip:ChurnInput, db:dependency):
+@app.post("/predict",response_model=dict,status_code=status.HTTP_200_OK)#put dependency here
+def predict(user_ip:ChurnInput, db:dependency):
    if user_ip: 
     df=pd.DataFrame(user_ip.model_dump(),index=[0])
     encoded_df=pd.get_dummies(df)
@@ -75,7 +74,7 @@ async def predict(user_ip:ChurnInput, db:dependency):
      db.add(db_users)
      db.commit()
     except Exception as e:
-       return {'error':str(e)}
+       raise HTTPException(status_code=400,detail=f"error={e}")
         
         #3. Return proper response
    return {
