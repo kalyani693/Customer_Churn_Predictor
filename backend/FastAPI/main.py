@@ -41,7 +41,7 @@ def get_data():
    db.close()
    
 @app.get("/",response_model=dict,status_code=status.HTTP_200_OK)
-async def home():
+def home():
     return {"message":"Wellcome"}    
 
 @app.get("/health",response_model=dict,status_code=status.HTTP_200_OK)
@@ -51,10 +51,10 @@ def health_check():
       'Model version':model_version
    })
 
-@app.get("/get_data")
+@app.get("/get_data",response_model=dict,status_code=status.HTTP_200_OK)
 def read_data():
    data=get_data()
-   return data
+   return {'data':data}
 
 @app.post("/predict",response_model=dict,status_code=status.HTTP_200_OK)#put dependency here
 def predict(user_ip:ChurnInput, db:dependency):

@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-#in password replace @ with %40 to avoid cofussion to computer
+#in password replace @ with %40 to avoid confusion to computer
 
 url_database=os.getenv("url_database")
 

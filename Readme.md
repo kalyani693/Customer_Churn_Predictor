@@ -19,7 +19,7 @@ The system helps businesses take proactive actions (e.g., discounts or retention
 - Docker
 
 # Model Details
-Model Used: Random Forest Clasifier.
+Model Used: XGBRFClassifier.
 Evaluation Metrics:
 Accuracy: 82 %
 Precision: 55 %
@@ -34,7 +34,7 @@ on local server
 
 Clone the repository:
   git clone https://github.com/kalyani693/Customer_Churn_Predictor.git
-  cd <repo-folder>
+  cd <repo-folder> #churn
 Install dependencies:
   pip install -r requirements.txt
 Run FastAPI backend:
