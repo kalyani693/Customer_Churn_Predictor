@@ -99,7 +99,7 @@ if predict_btn:
     "TotalCharges":TotalCharges
     }
     #connecting with api(backend)
-    API_URL=os.getenv("api_url")  # Ensure this is set in your .env file, e.g., http://localhost:8000/post_name  
+    API_URL=os.getenv("render_backend")  # Ensure this is set in your .env file, e.g., http://localhost:8000/post_name  
 
     try:
         with st.spinner("calling API..."):
