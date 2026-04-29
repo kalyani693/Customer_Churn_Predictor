@@ -7,7 +7,7 @@ load_dotenv()
 
 #in password replace @ with %40 to avoid confusion to computer
 
-url_database=os.getenv("local_database_url")
+url_database=os.getenv("database_url")
 
 engine= create_engine(url_database,echo=False)
 sessionlocal= sessionmaker(autocommit=False,autoflush=False, bind=engine)
