@@ -36,9 +36,13 @@ dependency=Annotated[session,Depends(get_db)]  #dependency
 def get_data():
    db=sessionlocal()
    query=text("select * from user_data")
-   db.execute(query)
-   db.commit()
+   result=db.execute(query)
+   data=result.fetchall()
+   data=[dict(row._mapping) for row in data]
    db.close()
+   return data
+   
+   
    
 @app.get("/",response_model=dict,status_code=status.HTTP_200_OK)
 def home():
