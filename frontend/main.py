@@ -3,6 +3,7 @@ from sqlalchemy import text  # For raw SQL if needed, but we'll use ORM-style
 import requests
 import os
 from dotenv import load_dotenv
+import time
 
 load_dotenv()
 
@@ -99,35 +100,46 @@ if predict_btn:
     "TotalCharges":TotalCharges
     }
     #connecting with api(backend)
-    API_URL=os.getenv("render_backend")  # Ensure this is set in your .env file, e.g., http://localhost:8000/post_name  
-
-    try:
-        with st.spinner("calling API..."):
-            res= requests.post(API_URL,
-                               json=payload,
-                                 timeout=15)
-
-        if res.status_code != 200:
-            st.error(f"API Error{res.status_code}: {res.text}")
-        else:           
-            data =res.json()  
-        
-            #-----replace predicted price with name which is returned as ans from api-----
-        y_pred=data.get("will churn")  
-        y_prob=data.get("Probability of Churn")  
-                
-
-        if y_pred:
-            st.success(f"Predicted result : {y_pred}")
-            st.success(f"Probability of churn: {y_prob}") 
+    API_URL=os.getenv("render_backend")    
+    MAX_RETRIES = 3
+    for attempt in range(MAX_RETRIES):
+      try:
+        with st.spinner("Calling API..."):
+            res = requests.post(f"{API_URL}/predict", json=payload, timeout=60)
+        if res.status_code == 200:
+            data = res.json()
+            y_pred=data.get("will churn")  
+            y_prob=data.get("Probability of Churn")  
+            if y_pred:
+              st.success(f"Predicted result : {y_pred}")
+              st.success(f"Probability of churn: {y_prob}") 
+              break
+            else:
+              st.warning(f"Responses received but key not found.full response:{data}")         
+        elif res.status_code in [408, 429, 500, 502, 503, 504]:
+            if attempt < MAX_RETRIES - 1:
+                st.warning(f"Temporary API issue. Retrying... ({attempt + 1}/{MAX_RETRIES})")
+                time.sleep(2 ** attempt)
+                continue
+            else:
+                st.error(f"API failed after retries: {res.status_code}")
+                break
         else:
-            st.warning(f"Responses received but key not found.full response:{data}")
-          
-
-    except requests.exceptions.ConnectionError:
+            st.error(f"API Error {res.status_code}: {res.text}")
+            break
+      except requests.exceptions.ConnectionError:
         st.error("could not connect to fastapi. is it running on port 8000?")
-    except Exception as e:
-        st.error(f"something went wrong:{e}")  
+        """except Exception as e:
+        st.error(f"something went wrong:{e}") """ 
+      except requests.exceptions.Timeout:
+        if attempt < MAX_RETRIES - 1:
+            st.warning(f"Request timed out. Retrying... ({attempt + 1}/{MAX_RETRIES})")
+            time.sleep(2 ** attempt)
+        else:
+            st.error("Request timed out after multiple retries.")
+      except requests.exceptions.RequestException as e:
+        st.error(f"Request failed: {e}")
+        break    
     
 
 # [Rest of your code unchanged - Feature Importance, Model Performance, Footer all exactly the same]
@@ -180,6 +192,45 @@ if "prediction" in st.session_state:
                 """, unsafe_allow_html=True)
             
             st.markdown('</div>', unsafe_allow_html=True)
+
+#save data button in col2
+with col2:
+    save_btn = st.button("Save Data", use_container_width=True)
+if save_btn:
+    payload={
+    "SeniorCitizen":SeniorCitizen,
+    "family":Family,
+    "tenure":tenure,
+    "InternetService":InternetService, 
+    "OnlineSecurity": OnlineSecurity,
+    "OnlineBackup": OnlineBackup,
+    "DeviceProtection":DeviceProtection,
+    "TechSupport":TechSupport,
+    "Contract":Contract,
+    "PaperlessBilling":PaperlessBilling,
+    "PaymentMethod":PaymentMethod,
+    "Streaming":Streaming,
+    "MonthlyCharges":MonthlyCharges,
+    "TotalCharges":TotalCharges
+    }
+    #connecting with api(backend)
+    API_URL=os.getenv("render_backend")  
+    try:
+        with st.spinner("Saving data..."):      
+           res= requests.post(f"{API_URL}/save_data",
+                           json=payload,
+                             timeout=60)
+        if res.status_code == 200:
+            data =res.json()  
+            st.success(data.get("Message", "Data saved successfully!"))
+        elif res.status_code in [408, 429, 500, 502, 503, 504]:
+            st.warning(f"Temporary API issue. Please try again later. ({res.status_code})")   
+        else:           
+            st.error(f"API Error{res.status_code}: {res.text}")
+    except requests.exceptions.ConnectionError:
+        st.error("could not connect to fastapi. is it running on port 8000?")
+    except Exception as e:
+        st.error(f"something went wrong:{e}")
 
 st.markdown('</div>', unsafe_allow_html=True)
 

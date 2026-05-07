@@ -6,7 +6,7 @@ class user_data(base):
     __tablename__="user_data"
     
     id=Column(Integer,primary_key=True)
-    Family =Column(VARCHAR(50),nullable=False)
+    family =Column(VARCHAR(50),nullable=False)
     SeniorCitizen=Column(VARCHAR(50),nullable=False)
     tenure=Column(Float,nullable=False)
     InternetService=Column(VARCHAR(50),nullable=False)
