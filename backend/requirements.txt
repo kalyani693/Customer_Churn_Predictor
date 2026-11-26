@@ -10,3 +10,4 @@ pydantic
 xgboost
 psycopg2
 python-dotenv
+psycopg
