@@ -22,7 +22,7 @@ model.base.metadata.create_all(bind=engine)#creates tables
 #middleware for cors
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://customer-churn-predictor-2-tpo3.onrender.com","http://localhost:8000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
